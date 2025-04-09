@@ -3,11 +3,13 @@ import NewProject from "./Components/NewProject";
 import NoProjectSelected from "./Components/NoProjectSelected";
 import ProjectsSidebar from "./Components/ProjectsSidebar";
 import SelectedProject from "./Components/SelectedProject";
+import Deleted from "./Components/Deleted";
 function App() {
   const [projectsState, setProjectsState] = useState({
     selectedProjectId: undefined,
     projects: [],
   });
+  const [deletedProjects, setDeletedProjects] = useState([]);
   const selectedProject = projectsState.projects.find(
     (project) => project.id === projectsState.selectedProjectId
   );
@@ -21,15 +23,35 @@ function App() {
   }
   function handleDeleteProject() {
     setProjectsState((prevState) => {
+      const deletedProject = prevState.projects.find(
+        (project) => project.id === prevState.selectedProjectId
+      );
+      const updatedProjects = prevState.projects.filter(
+        (project) => project.id !== prevState.selectedProjectId
+      );
+
+      setDeletedProjects((prevDeletedProjects) => [
+        ...prevDeletedProjects,
+        deletedProject,
+      ]);
+
       return {
         ...prevState,
         selectedProjectId: undefined,
-        projects: prevState.projects.filter(
-          (project) => project.id !== prevState.selectedProjectId
-        ),
+        projects: updatedProjects,
       };
     });
   }
+  function handledelete() {
+    const deletedProject = prevState.projects.find(
+      (project) => project.id === prevState.selectedProjectId
+    );
+    setDeletedProjects((prevDeletedProjects) => [
+      ...prevDeletedProjects,
+      deletedProject,
+    ]);
+  }
+  console.log(deletedProjects);
   function handleSelectedProject(id) {
     setProjectsState((prevState) => {
       return {
@@ -60,7 +82,9 @@ function App() {
     });
   }
   console.log(projectsState);
-
+  // const deleteddProject = deletedProject.find(
+  //   (project) => project.id === deletedProject.project.id
+  // );
   let content = (
     <SelectedProject
       project={selectedProject}
@@ -82,6 +106,7 @@ function App() {
         onSelectProject={handleSelectedProject}
       />
       {content}
+      <Deleted deleteds={deletedProjects} />
     </div>
   );
 }
